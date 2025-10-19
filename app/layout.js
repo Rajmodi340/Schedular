@@ -3,7 +3,7 @@ import Header from "@/components/header";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import {Inter} from "next/font/google"
-
+import CreateEventDrawer from "@/components/create-event";
 export const metadata = {
   title: "Shedulrr",
   description: "Meeting Scheduling App",
@@ -26,6 +26,7 @@ export default function RootLayout({ children }) {
           <p>Made with by Raj Modi</p>
         </div>
         </footer>
+        <CreateEventDrawer></CreateEventDrawer>
       </body>
     </html>
     </ClerkProvider>

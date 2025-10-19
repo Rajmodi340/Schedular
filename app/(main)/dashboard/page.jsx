@@ -8,8 +8,8 @@ import { useForm } from 'react-hook-form'
 import {zodResolver} from "@hookform/resolvers/zod"
 import {userschema} from "@/app/lib/validator"
 import { useEffect } from 'react'
-import { updateUsername } from "@/actions/user";
 import useFetch from '@/hooks/usefetch'
+import { BarLoader } from "react-spinners";
 const page = () => {
  const {isLoaded,user}= useUser()
   const {register,handleSubmit,setValue,formState:{errors}}=useForm({
@@ -19,8 +19,22 @@ const page = () => {
     setValue("username", user?.username);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded]);
- const{loading,error,fn:fnUpdateUsername}=useFetch(updateUsername)
- const onSubmit=async(data)=>{}
+ const updateUsernameApi = async (username) => {
+  const res = await fetch('/api/user/username', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username })
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data?.error || 'Request failed');
+  }
+  return data;
+ }
+ const{loading,error,fn:fnUpdateUsername}=useFetch(updateUsernameApi)
+ const onSubmit=async(data)=>{
+  fnUpdateUsername(data.username)
+ }
   return (
     <div className="space-y-8">
      <Card>
@@ -48,7 +62,13 @@ Your Unique Link
                   {errors.username.message}
                 </p>
              )}
-          </div>
+           {error && (
+                <p className="text-red-500 text-sm mt-1">{error?.message}</p>
+              )}
+            </div>
+            {loading && (
+              <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />
+            )}
           <Button>Update Username</Button>
         </form>
       </CardContent>
